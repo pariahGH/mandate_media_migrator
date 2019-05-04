@@ -83,7 +83,7 @@ class MandatemediamigratorPipeline(object):
 
 <channel>
 	<generator>https://wordpress.org/?v=5.1.1</generator>
-	<title>TexProtects</title>
+	<title>{spider.title}</title>
 	<link>{spider.target_url}</link>
 	<description>Just another WordPress site</description>
 	<pubDate>Sat, 23 Mar 2019 17:56:32 +0000</pubDate>
