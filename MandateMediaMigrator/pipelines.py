@@ -28,7 +28,7 @@ class MandatemediamigratorPipeline(object):
 			with open(f"./objects/{paths[type(item)]}/{item['url'].split('/')[-1]}",'wb') as f:
 				fileUrl =  ""
 				if "https" not in item["url"]:
-					fileUrl =  spider.base_url+item["url"] 
+					fileUrl =  "https://"+spider.base_url+item["url"] 
 				else:
 					fileUrl = item["url"]
 				req = requests.get(fileUrl)
@@ -84,13 +84,13 @@ class MandatemediamigratorPipeline(object):
 <channel>
 	<generator>https://wordpress.org/?v=5.1.1</generator>
 	<title>TexProtects</title>
-	<link>https://localhost:8000</link>
+	<link>{spider.target_url}</link>
 	<description>Just another WordPress site</description>
 	<pubDate>Sat, 23 Mar 2019 17:56:32 +0000</pubDate>
 	<language>en-US</language>
 	<wp:wxr_version>1.2</wp:wxr_version>
-	<wp:base_site_url>https://localhost:8000</wp:base_site_url>
-	<wp:base_blog_url>https://localhost:8000</wp:base_blog_url>
+	<wp:base_site_url>{spider.target_url}</wp:base_site_url>
+	<wp:base_blog_url>{spider.target_url}</wp:base_blog_url>
 
 	<wp:term>
 	<wp:term_id><![CDATA[2]]></wp:term_id>
@@ -100,8 +100,6 @@ class MandatemediamigratorPipeline(object):
 	<wp:term_name><![CDATA[Default]]></wp:term_name>
 </wp:term>
 	""")
-	#that last bit creates a menuf or us by default
-	#TODO: this information should be configurable, spider.<param name>
 	
 	def close_spider(self, spider):
 		self.file.write("""</channel>

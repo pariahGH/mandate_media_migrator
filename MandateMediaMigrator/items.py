@@ -45,21 +45,10 @@ class Category(scrapy.Item):
             <wp:category_description><![CDATA[{self["description"]}]]></wp:category_description>
         </wp:category>
         """
-''' this may or may not be related
-<wp:term>
-    <wp:term_id><![CDATA[1]]></wp:term_id>
-    <wp:term_taxonomy><![CDATA[category]]></wp:term_taxonomy>
-    <wp:term_slug><![CDATA[uncategorized]]></wp:term_slug>
-    <wp:term_parent><![CDATA[]]></wp:term_parent>
-    <wp:term_name><![CDATA[Uncategorized]]></wp:term_name>
-    		<wp:term_description><![CDATA[this is a test description]]></wp:term_description>jj 
-
-</wp:term>
-'''
 
 published = {True:"publish",False:""}
 featured = {True:0,False:""}
-#TODO: I think this will require plugin
+#TODO: this should end up translated to a gallery somehow
 class Slideshow(scrapy.Item):
     title = scrapy.Field()
     url = scrapy.Field()
@@ -75,20 +64,20 @@ class NavElement(scrapy.Item):
     order = scrapy.Field()
     url = scrapy.Field()
     title = scrapy.Field()
-    name = scrapy.Field()            #?
+    name = scrapy.Field()            
     parent = scrapy.Field()
-    path_match_type = scrapy.Field() #?
-    user_login_type = scrapy.Field() #?
-    groups = scrapy.Field()          #?
+    path_match_type = scrapy.Field() 
+    user_login_type = scrapy.Field() 
+    groups = scrapy.Field()          
     itemid = scrapy.Field()
-    #most of these dont appear to have wordpress equivalents
+    #most of these fields dont appear to have wordpress equivalents
     def format(self):
         return f"""
         <item>
 		<title>{self["title"]}</title>
 		<link>{self["url"]}</link>
 		<pubDate></pubDate>
-		<dc:creator><![CDATA[tp-wpadmin]]></dc:creator>
+		<dc:creator><![CDATA[wpadmin]]></dc:creator>
 		<guid isPermaLink="false">{self["url"]}</guid>
 		<description></description>
 		<content:encoded>
@@ -163,17 +152,7 @@ class Tag(scrapy.Item):
 <wp:tag_description><![CDATA[]]></wp:tag_description>
 	</wp:tag>
         """
-''' this may or may not be relateD:
-    <wp:term>
-    <wp:term_id><![CDATA[4]]></wp:term_id>
-    <wp:term_taxonomy><![CDATA[post_tag]]></wp:term_taxonomy>
-    <wp:term_slug><![CDATA[this-is-test-tag]]></wp:term_slug>
-    <wp:term_parent><![CDATA[]]></wp:term_parent>
-    <wp:term_name><![CDATA[test tag]]></wp:term_name>
-    <wp:term_description><![CDATA[this tag is a test]]></wp:term_description>
-</wp:term>
-'''
-#TODO: i think this will require plugin
+#TODO: this requires plugin
 class Redirect(scrapy.Item):
     redirect_from = scrapy.Field()
     redirect_to = scrapy.Field()
@@ -202,14 +181,13 @@ class BlogPost(scrapy.Item):
     video = scrapy.Field()
     itemid = scrapy.Field()
     delete_image = scrapy.Field()
-    #will ahve to figure this out???
     def format(self):
         return f"""
         <item>
 		<title>{self["title"]}</title>
 		<link>{self["slug"]}</link>
 		<pubDate>{self["publish_date"]["date"]} {self["publish_date"]["time"]}</pubDate>
-		<dc:creator><![CDATA[tp-wpadmin]]></dc:creator>
+		<dc:creator><![CDATA[wpadmin]]></dc:creator>
 		<guid isPermaLink="false">{self["slug"]}</guid>
 		<description></description>
 		<content:encoded>
@@ -249,7 +227,7 @@ class NewsPost(scrapy.Item):
 		<title>{self["title"]}</title>
 		<link>{self["url"]}</link>
 		<pubDate>{self["date"]["date"]} {self["date"]["time"]}</pubDate>
-		<dc:creator><![CDATA[tp-wpadmin]]></dc:creator>
+		<dc:creator><![CDATA[wpadmin]]></dc:creator>
 		<guid isPermaLink="false">{self["url"]}</guid>
 		<description>{self["description"]}</description>
 		<content:encoded>
@@ -281,14 +259,13 @@ class Page(scrapy.Item):
     published = scrapy.Field() #this corresponds to  wp:status
     featured = scrapy.Field() #corresponds to is sticky (i think)
     itemid = scrapy.Field()
-    #TODO: self.url may require editing depending on whether it is full or relative
     def format(self):
         return f"""
         <item>
 		<title>{self["title"]}</title>
 		<link>{self["url"]}</link>
 		<pubDate>{self["publish_date"]["date"]} {self["publish_date"]["time"]}</pubDate>
-		<dc:creator><![CDATA[tp-wpadmin]]></dc:creator>
+		<dc:creator><![CDATA[wpadmin]]></dc:creator>
 		<guid isPermaLink="false">{self["url"]}</guid>
 		<description>{self["template_name"]}</description>
 		<content:encoded><![CDATA[{self["content"]}]]></content:encoded>

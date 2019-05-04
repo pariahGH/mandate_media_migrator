@@ -1,13 +1,9 @@
-#this handles scraping of data from the mandate media site
-
 import scrapy
 from MandateMediaMigrator.items import *
 from scrapy.http import FormRequest
 import os
 class MandateScraper(scrapy.Spider):
     name = "MandateScraper"
-    #def __init__(self, **kwargs):
-    #    super().__init__(**kwargs)
     
     def start_requests(self):
         if self.base_url == "" or self.username == "" or self.password == "":
@@ -31,7 +27,10 @@ class MandateScraper(scrapy.Spider):
         return FormRequest.from_response(response, dont_filter=True, formdata={"csrfmiddlewaretoken":csrf,"username":self.username,"password":self.password,"this_is_the_login_form":"1","next":"/admin"},callback=self.start)
     
     def start(self,response):
-        yield scrapy.Request(f'https://{self.base_url}/admin/filebrowser/browse', callback=self.parseFiles)
+        fileReq = scrapy.Request(f'https://{self.base_url}/admin/filebrowser/browse', callback=self.parseFiles)
+        fileReq.meta["baseUrl"] = "https://www.texprotects.org/admin/filebrowser/browse/?"
+        fileReq.meta["count"] = 1
+        yield fileReq
         for target in self.targets:
             request = scrapy.Request(target[0], callback=self.parseList)
             request.meta['callback'] = target[1]
@@ -175,19 +174,25 @@ class MandateScraper(scrapy.Spider):
             yield File(url=values["image"])
         yield BlogPost(**values, itemid=response.url.split("/")[-2])
 
-    def parseFiles(self, response):
-        current_page = 1
-        for li in response.xpath('//*[@id="grp-content-container"]/div[1]/div/div/div/nav/ul/li/text()').getall():
-            if "\n" not in li:
-                current_page = int(li)
-        max_page = response.xpath('//*[@id="grp-content-container"]/div[1]/div/div/div/nav/ul/li')[-1].xpath("a/text()").get()
+    def parseFiles(self, response):#need to specify in response meta what thebase url for the current folder is
+        try:
+            max_page = int(response.xpath('//*[@id="grp-content-container"]/div[1]/div/div/div/nav/ul/li')[-1].xpath("a/text()").get())
+        except Exception:
+            max_page = response.meta["count"]
+        finally:
+            #iterate over rows and yield File items
+            for row in response.xpath('//*[@id="grp-changelist"]/div/table/tbody/tr[contains(@class,"grp-row")]'):
+                if row.xpath('td/span[contains(@class,"fb_type")]/text()').get() == "Folder":
+                    reqUrl = f"https://{self.base_url}{row.xpath('td')[2].xpath('a/@href').get()}"
+                    req = scrapy.Request(reqUrl, callback=self.parseFiles)
+                    req.meta["baseUrl"] = reqUrl
+                    req.meta["count"] = 1
+                    yield req
+                else:
+                    yield File(url=row.xpath('td[contains(@class,"fb_thumbnail")]/a/@href').get())
 
-        #iterate over rows and yield File items
-        for row in response.xpath('//*[@id="grp-changelist"]/div/table/tbody/tr[contains(@class,"grp-row")]'):
-            if row.xpath('td/span[contains(@class,"fb_type")]/text()').get() == "Folder":
-                yield scrapy.Request(f"https://{self.base_url}{row.xpath('td')[2].xpath('a/@href').get()}", callback=self.parseFiles)
-            else:
-                yield File(url=row.xpath('td[contains(@class,"fb_thumbnail")]/a/@href').get())
-
-        if current_page != max_page:
-            yield scrapy.Request(f'https://{self.base_url}/admin/filebrowser/browse/?p='+str(current_page+1), callback=self.parseFiles)    
+            if response.meta["count"] != max_page:
+                nextReq = scrapy.Request(f'{response.meta["baseUrl"]}&p='+str(response.meta["count"]+1), callback=self.parseFiles)  
+                nextReq.meta["baseUrl"] = response.meta["baseUrl"]
+                nextReq.meta["count"] = response.meta["count"] + 1
+                yield nextReq
