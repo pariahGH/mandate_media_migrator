@@ -100,36 +100,36 @@ class NavElement(scrapy.Item):
 		<wp:meta_key><![CDATA[_menu_item_type]]></wp:meta_key>
 		<wp:meta_value><![CDATA[post_type]]></wp:meta_value>
 		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_menu_item_menu_item_parent]]></wp:meta_key>
-		<wp:meta_value><![CDATA[0]]></wp:meta_value>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_menu_item_menu_item_parent]]></wp:meta_key>
+			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_menu_item_object_id]]></wp:meta_key>
-		<wp:meta_value><![CDATA[2]]></wp:meta_value>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_menu_item_object_id]]></wp:meta_key>
+			<wp:meta_value><![CDATA[2]]></wp:meta_value>
 		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_menu_item_object]]></wp:meta_key>
-		<wp:meta_value><![CDATA[page]]></wp:meta_value>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_menu_item_object]]></wp:meta_key>
+			<wp:meta_value><![CDATA[page]]></wp:meta_value>
 		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_menu_item_target]]></wp:meta_key>
-		<wp:meta_value><![CDATA[]]></wp:meta_value>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_menu_item_target]]></wp:meta_key>
+			<wp:meta_value><![CDATA[]]></wp:meta_value>
 		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_menu_item_classes]]></wp:meta_key>
-        <wp:meta_value><![CDATA[a:1:{{i:0;s:0:"";}}]]></wp:meta_value>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_menu_item_classes]]></wp:meta_key>
+			<wp:meta_value><![CDATA[a:1:{{i:0;s:0:"";}}]]></wp:meta_value>
 		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_menu_item_xfn]]></wp:meta_key>
-		<wp:meta_value><![CDATA[]]></wp:meta_value>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_menu_item_xfn]]></wp:meta_key>
+			<wp:meta_value><![CDATA[]]></wp:meta_value>
 		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_menu_item_url]]></wp:meta_key>
-		<wp:meta_value><![CDATA[]]></wp:meta_value>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_menu_item_url]]></wp:meta_key>
+			<wp:meta_value><![CDATA[]]></wp:meta_value>
 		</wp:postmeta>
 							</item>
-                            <wp:term>
+    <wp:term>
 		<wp:term_id><![CDATA[{self["itemid"]}]]></wp:term_id>
 		<wp:term_taxonomy><![CDATA[nav_menu]]></wp:term_taxonomy>
 		<wp:term_slug><![CDATA[{self["url"]}]]></wp:term_slug>
@@ -145,12 +145,12 @@ class Tag(scrapy.Item):
     #Mandate media tags do not have descriptions
     def format(self):
         return f"""
-       <wp:tag>
-		<wp:term_id>{self["itemid"]}</wp:term_id>
-		<wp:tag_slug><![CDATA[{self["slug"]}]]></wp:tag_slug>
-		<wp:tag_name><![CDATA[{self["name"]}]]></wp:tag_name>
-<wp:tag_description><![CDATA[]]></wp:tag_description>
-	</wp:tag>
+        <wp:tag>
+			<wp:term_id>{self["itemid"]}</wp:term_id>
+			<wp:tag_slug><![CDATA[{self["slug"]}]]></wp:tag_slug>
+			<wp:tag_name><![CDATA[{self["name"]}]]></wp:tag_name>
+			<wp:tag_description><![CDATA[]]></wp:tag_description>
+		</wp:tag>
         """
 #TODO: this requires plugin
 class Redirect(scrapy.Item):
@@ -184,29 +184,27 @@ class BlogPost(scrapy.Item):
     def format(self):
         return f"""
         <item>
-		<title>{self["title"]}</title>
-		<link>{self["slug"]}</link>
-		<pubDate>{self["publish_date"]["date"]} {self["publish_date"]["time"]}</pubDate>
-		<dc:creator><![CDATA[wpadmin]]></dc:creator>
-		<guid isPermaLink="false">{self["slug"]}</guid>
-		<description></description>
-		<content:encoded>
-				<![CDATA[{self["body"]}]]>		</content:encoded>
-		<excerpt:encoded>
-				<![CDATA[]]>		</excerpt:encoded>
-		<wp:post_id>{self["itemid"]}</wp:post_id>
-		<wp:post_date><![CDATA[{self["publish_date"]["date"]} {self["publish_date"]["time"]}]]></wp:post_date>
-		<wp:post_date_gmt><![CDATA[{self["publish_date"]["date"]} {self["publish_date"]["time"]}]]></wp:post_date_gmt>
-		<wp:comment_status><![CDATA[open]]></wp:comment_status>
-		<wp:ping_status><![CDATA[open]]></wp:ping_status>
-		<wp:post_name><![CDATA[{self["title"]}]]></wp:post_name>
-		<wp:status><![CDATA[{published[self["published"]]}]]></wp:status>
-		<wp:post_parent>0</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type><![CDATA[post]]></wp:post_type>
-		<wp:post_password><![CDATA[]]></wp:post_password>
-		<wp:is_sticky>{featured[self["featured_post"]]}</wp:is_sticky>
-		<category domain="category" nicename="uncategorized"><![CDATA[Uncategorized]]></category>
+			<title>{self["title"]}</title>
+			<link>{self["slug"]}</link>
+			<pubDate>{self["publish_date"]["date"]} {self["publish_date"]["time"]}</pubDate>
+			<dc:creator><![CDATA[wpadmin]]></dc:creator>
+			<guid isPermaLink="false">{self["slug"]}</guid>
+			<description></description>
+			<content:encoded><![CDATA[{self["body"]}]]></content:encoded>
+			<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+			<wp:post_id>{self["itemid"]}</wp:post_id>
+			<wp:post_date><![CDATA[{self["publish_date"]["date"]} {self["publish_date"]["time"]}]]></wp:post_date>
+			<wp:post_date_gmt><![CDATA[{self["publish_date"]["date"]} {self["publish_date"]["time"]}]]></wp:post_date_gmt>
+			<wp:comment_status><![CDATA[open]]></wp:comment_status>
+			<wp:ping_status><![CDATA[open]]></wp:ping_status>
+			<wp:post_name><![CDATA[{self["title"]}]]></wp:post_name>
+			<wp:status><![CDATA[{published[self["published"]]}]]></wp:status>
+			<wp:post_parent>0</wp:post_parent>
+			<wp:menu_order>0</wp:menu_order>
+			<wp:post_type><![CDATA[post]]></wp:post_type>
+			<wp:post_password><![CDATA[]]></wp:post_password>
+			<wp:is_sticky>{featured[self["featured_post"]]}</wp:is_sticky>
+			<category domain="category" nicename="uncategorized"><![CDATA[Uncategorized]]></category>
 	    </item>
         """
 
